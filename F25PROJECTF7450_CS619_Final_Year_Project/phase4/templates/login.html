@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CS619 — StudentPredictor Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="login-page">
+  <div class="login-box">
+
+    <div class="login-logo">
+      <div class="app-name">📊 StudentPredictor</div>
+      <div class="app-sub">CS619 · ML Dashboard · Phase 4 Final</div>
+    </div>
+
+    {% if error %}
+    <div class="login-error">⚠ {{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/login">
+
+      <div class="field">
+        <label>Select Role</label>
+        <select name="role" id="role" onchange="toggleID(this.value)">
+          <option value="teacher">👩‍🏫 Teacher</option>
+          <option value="student">🎓 Student</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Enter your password" required>
+      </div>
+
+      <div class="field" id="id-field" style="display:none;">
+        <label>Student ID &nbsp;<span style="font-weight:400;opacity:0.7;">(S1000 to S{{ last_id }})</span></label>
+        <input type="text" name="student_id" placeholder="e.g. S1042">
+      </div>
+
+      <button type="submit" class="login-btn">Sign In →</button>
+
+    </form>
+
+    <div class="hint-box">
+      <b>Teacher:</b> password = teacher123<br>
+      <b>Student:</b> password = student123 &nbsp;+&nbsp; Student ID<br>
+      <b>Valid IDs:</b> S1000 to S{{ last_id }}
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleID(val) {
+  document.getElementById('id-field').style.display = val === 'student' ? 'block' : 'none';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student {{ student_id }} — CS619 Phase 4</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<div class="navbar">
+  <div class="navbar-title">
+    📊 StudentPredictor
+    <span class="navbar-badge">Student View</span>
+  </div>
+  <a href="/logout" class="logout-link">Logout</a>
+</div>
+
+<div class="page">
+
+  <!-- ── STUDENT BANNER ── -->
+  <div class="student-banner">
+    <div class="avatar-circle" style="background:{{ avatar_bg }};color:{{ avatar_color }};">
+      {{ avatar_emoji }}
+    </div>
+    <div style="flex:1;min-width:0;">
+      <div class="banner-name">Student ID: {{ student_id }} &nbsp;|&nbsp; Reg No: {{ reg_no }} &nbsp;|&nbsp; {{ gender }} · Age {{ age }}</div>
+      <div class="banner-sub">
+        Course: {{ course }} &nbsp;·&nbsp; Semester {{ semester }}<br>
+        CGPA: {{ cgpa }} &nbsp;·&nbsp; Prev GPA: {{ prev_gpa }} &nbsp;·&nbsp; Attendance: {{ attend }}% &nbsp;·&nbsp; Study: {{ study_hrs }} hrs/week &nbsp;·&nbsp; Total Score: {{ total_score }}
+      </div>
+      <div class="outcome-tag {{ outcome_class }}">{{ outcome_text }}</div>
+    </div>
+    <div class="banner-right">
+      <div class="banner-right-label">Performance</div>
+      <div class="banner-right-value">{{ performance }}</div>
+      <div class="banner-right-label" style="margin-top:8px;">Risk Level</div>
+      <div class="banner-right-value" style="color:{{ risk_color }};">{{ risk_level }}</div>
+      <div class="fail-prob-badge" style="background:{{ risk_bg }};color:{{ risk_color }};">
+        At-Risk: {{ fail_prob }}%
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MINI STAT CARDS ── -->
+  <div class="mini-stats">
+    <div class="mini-card">
+      <div class="mini-val">{{ prev_gpa }}</div>
+      <div class="mini-lbl">Previous GPA</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-val">{{ attend }}%</div>
+      <div class="mini-lbl">Attendance</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-val">{{ study_hrs }}</div>
+      <div class="mini-lbl">Study Hrs/Wk</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-val">{{ lib }}</div>
+      <div class="mini-lbl">Library Visits</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-val">{{ online }}</div>
+      <div class="mini-lbl">Online Hrs</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-val">{{ total_score }}</div>
+      <div class="mini-lbl">Total Score</div>
+    </div>
+  </div>
+
+  <!-- ── EARLY ALERTS ── -->
+  {% if alerts_html %}
+  {{ alerts_html | safe }}
+  {% endif %}
+
+  <!-- ── SCORE BREAKDOWN + CHART ── -->
+  <div class="two-col">
+    <div class="chart-card">
+      <div class="chart-title">📊 Subject Score Breakdown</div>
+      {{ bars_html | safe }}
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">📈 Your Scores vs Class Average</div>
+      {{ chart | safe }}
+    </div>
+  </div>
+
+  <!-- ── STRENGTHS ── -->
+  {{ strengths_html | safe }}
+
+  <!-- ── RECOMMENDATIONS HEADING ── -->
+  <div class="rec-heading">
+    <div class="section-heading" style="margin-bottom:4px;">🎯 Personalised Recommendations</div>
+  </div>
+
+  <!-- ── RECOMMENDATION CARDS ── -->
+  {% if rec_cards_html %}
+  <div class="rec-grid">
+    {{ rec_cards_html | safe }}
+  </div>
+  {% else %}
+  <div class="chart-card" style="text-align:center;padding:30px;">
+    <div style="font-size:2rem;margin-bottom:10px;">✅</div>
+    <div style="font-weight:800;color:#276749;font-size:1.1rem;">Outstanding Performance!</div>
+    <div style="color:#718096;margin-top:6px;">You are excelling across all academic dimensions. Keep up the great work!</div>
+  </div>
+  {% endif %}
+
+</div>
+<!-- end page -->
+
+</body>
+</html>

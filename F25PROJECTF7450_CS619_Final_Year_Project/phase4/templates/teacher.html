@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Dashboard — CS619 Phase 4</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<div class="navbar">
+  <div class="navbar-title">
+    📊 StudentPredictor
+    <span class="navbar-badge">Teacher View</span>
+    <span class="navbar-model">{{ model_name }}</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <a href="/download/at-risk" class="nav-dl-btn">⬇ At-Risk CSV</a>
+    <a href="/download/all"     class="nav-dl-btn">⬇ All Students CSV</a>
+    <a href="/logout"           class="logout-link">Logout</a>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- ── PAGE HEADING ── -->
+  <div class="section-heading">Class Performance Overview</div>
+  <div class="section-sub">Phase 4 · Predictions + Recommendations Engine · MySQL Backend</div>
+
+  <!-- ── STAT CARDS ── -->
+  <div class="stats-row">
+    <div class="stat-card purple">
+      <div class="stat-label">Total Students</div>
+      <div class="stat-value">{{ total }}</div>
+      <div class="stat-note">Dataset loaded</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Predicted Pass</div>
+      <div class="stat-value">{{ pass_count }}</div>
+      <div class="stat-note">{{ pass_rate }}% of class</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-label">Predicted Fail</div>
+      <div class="stat-value">{{ fail_count }}</div>
+      <div class="stat-note">{{ fail_rate }}% at risk</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-label">Avg Final Exam</div>
+      <div class="stat-value">{{ avg_final }}</div>
+      <div class="stat-note">Out of 100</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">Avg Attendance</div>
+      <div class="stat-value">{{ avg_attend }}%</div>
+      <div class="stat-note">Class average</div>
+    </div>
+    <div class="stat-card pink">
+      <div class="stat-label">Avg CGPA</div>
+      <div class="stat-value">{{ avg_cgpa }}</div>
+      <div class="stat-note">Out of 4.0</div>
+    </div>
+  </div>
+
+  <!-- ── ALERT BANNER ── -->
+  {% if fail_count > 0 %}
+  <div class="alert-banner-top">
+    <span style="font-size:1.1rem;">⚠</span>
+    <span><b>{{ fail_count }} students</b> are predicted to fail this semester. Review the At-Risk tab below and take early intervention action.</span>
+  </div>
+  {% endif %}
+
+  <!-- ── CHARTS ROW ── -->
+  <div class="charts-row-3">
+    <div class="chart-card">
+      <div class="chart-title">🍩 Pass / Fail Distribution</div>
+      {{ chart_pie | safe }}
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">📊 Performance Category Breakdown</div>
+      {{ chart_perf | safe }}
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">📈 Class Average Scores by Subject</div>
+      {{ chart_scores | safe }}
+    </div>
+  </div>
+
+  <!-- ── STUDENT TABLE ── -->
+  <div class="table-card">
+
+    <div class="table-header-row">
+      <div class="table-title">🎓 Student Records</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <input class="search-box" type="text"
+               placeholder="🔍 Search students..."
+               oninput="filterTable(activeTab + '-body', this.value)"
+               id="main-search">
+        <a href="/download/at-risk" class="dl-btn">⬇ At-Risk CSV</a>
+        <a href="/download/all"     class="dl-btn dl-btn-outline">⬇ All CSV</a>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('risk',this)">🔴 At-Risk Students ({{ fail_count }})</button>
+      <button class="tab-btn"        onclick="showTab('all',this)">📋 All Students ({{ total }})</button>
+    </div>
+
+    <div id="tab-risk">
+      <table>
+        <thead><tr>{{ header_html | safe }}</tr></thead>
+        <tbody id="risk-body">{{ risk_rows | safe }}</tbody>
+      </table>
+    </div>
+
+    <div id="tab-all" style="display:none;">
+      <table>
+        <thead><tr>{{ header_html | safe }}</tr></thead>
+        <tbody id="all-body">{{ all_rows | safe }}</tbody>
+      </table>
+    </div>
+
+  </div>
+  <!-- end table-card -->
+
+</div>
+<!-- end page -->
+
+<script>
+var activeTab = 'risk';
+
+function showTab(name, btn) {
+  activeTab = name;
+  document.getElementById('tab-risk').style.display = name === 'risk' ? 'block' : 'none';
+  document.getElementById('tab-all').style.display  = name === 'all'  ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // reset search
+  document.getElementById('main-search').value = '';
+}
+
+function filterTable(bodyId, val) {
+  val = val.toLowerCase();
+  var rows = document.querySelectorAll('#' + bodyId + ' tr');
+  rows.forEach(function(row) {
+    row.style.display = row.textContent.toLowerCase().includes(val) ? '' : 'none';
+  });
+}
+</script>
+
+</body>
+</html>
